@@ -1,1 +1,51 @@
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+<p>Categories: <%= @post.categories.map(&:name).join(", ") %></p>
+<p>Comments by:</p>
+<ul>
+  <% @post.users.uniq.each do |user| %>
+    <li> <%= link_to user.username, user %> </li>
+  <% end %>
+</ul>
 
+<hr>
+<h4>Comments</h4>
+<% @post.comments.each do |comment| %>
+  <p><%= "#{comment.user.username} says: #{comment.content}" %></p>
+<% end %>
+
+<hr>
+<h4>New Comment</h4> <!-- refactor as partial under comment -->
+<%= form_for @comment do |f| %>
+  <%= f.hidden_field :post_id %>
+  <div>
+    <%= f.label :content %>
+    <%= f.text_area :content %>
+  </div>
+  <div>
+    <%= f.label :user_id, "Select User:" %>
+    <%= f.collection_select :user_id, @users, :id, :username, include_blank: 'New User' %>
+  </div>
+  <div>Create New User</div>
+  <div>
+    <%= f.fields_for :user do |u| %>
+      <%= u.label :username %>
+      <%= u.text_field :username %>
+    <% end %>
+  </div>
+  <%= f.submit %>
+<% end %>
+
+<!-- it 'creates a comment with an existing user' do
+  fill_in('comment_content', with: 'great post!')
+  select(@user.username, from: 'comment_user_id')
+  click_button('Create Comment')
+  expect(page).to have_content("#{@user.username} says: great post!")
+end
+
+it 'creates a comment and a new user' do
+  fill_in('comment_content', with: 'i agree')
+  fill_in('comment_user_attributes_username', with: 'CoolPerson25')
+  click_button('Create Comment')
+  expect(page).to have_content("CoolPerson25 says: i agree")
+end-->
