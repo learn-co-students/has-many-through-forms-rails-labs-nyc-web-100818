@@ -1,6 +1,9 @@
 class PostsController < ApplicationController
   def show
     @post = Post.find(params[:id])
+    @comment = Comment.new(post: @post)
+    @comment.build_user # need to build a user to populate field_for
+    @users = User.all
   end
 
   def index
